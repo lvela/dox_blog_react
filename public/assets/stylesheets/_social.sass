@@ -1,0 +1,25 @@
+@import variables
+
+// Social
+
+share-button
+  font-family: $font
+  font-weight: 500
+  font-size: 1em
+  background: transparent
+  border: 1px solid $gray-light
+  color: $gray
+  padding: 0.5em 1em 0.5em 2em
+  &:before
+    top: 0.7em
+    opacity: 0.5
+  &:hover
+    background: $gray-lightest
+    color: #333
+    &:before
+      opacity: 1
+      transition: $all
+  .sb-social.sb-center.sb-top
+    transform: translate(-21.7%, -100%)
+    border-radius: 2px
+    overflow: hidden

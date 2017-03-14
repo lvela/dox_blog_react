@@ -1,0 +1,52 @@
+@import variables
+
+form
+  *
+    width: 100%
+    margin: 1% 0
+
+input, select, textarea, select
+  font-family: $font
+  font-size: 1em
+  outline: none
+  border-radius: $radius
+  border: 1px solid #ddd
+  padding: 0.5em
+  &:hover, &:focus
+    border-color: #aaa
+    transition: $all
+
+input
+  &[type='date'],
+  &[type='datetime-local'],
+  &[type='time'],
+  &[type='week'],
+  &[type='month']
+    padding: 0.31em 0.5em
+  &[type='range']
+    margin: 0.5em 0
+    width: 100%
+    height: $size
+    background: $white
+    border-radius: $size
+    appearance: none
+    -webkit-appearance: none
+  &[type='checkbox'], &[type='radio']
+    margin: 0 0.3em
+    width: auto
+
+select
+  height: 2.3em
+  background: $page
+
+// Radios & checkboxes
+.checkbox, .radio
+  line-height: 2.2
+
+// Gigantor sized forms
+.big
+  input, select, textarea, select
+    padding: 0.7em 0.5em
+    font-size: 1.2em
+  select
+    height: 2.7em
