@@ -14,8 +14,8 @@ export function fetchArticles(args={}) {
   return _fetchArticles(path)
 }
 
-export function searchArticles(query) {
-  return _fetchArticles(`articles.json?q=${query}`)
+export function fetchSuggestions(value) {
+  return _fetchArticles(`articles/search_suggestions.json?value=${value}`)
 }
 
 async function _fetchArticles(path) {

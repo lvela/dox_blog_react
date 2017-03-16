@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactPaginate from 'react-paginate'
 
-import {fetchArticles} from '../../data/article'
+import {fetchArticles, fetchSuggestions} from '../../data/article'
 import Articles from './Articles'
-import SearchForm from './SearchForm'
+import Autosuggest from 'react-autosuggest';
 
 class ArticlesContainer extends React.Component {
   constructor(props) {
@@ -11,33 +11,54 @@ class ArticlesContainer extends React.Component {
 
     this.state = {
       articles: [],
+      titleResults: [],
       meta: {},
       searchTerm: '',
-      currentPage: 1
+      searchSuggestions: []
     };
 
     this.onSearchInputChanged = this.onSearchInputChanged.bind(this);
     this.onSearch = this.onSearch.bind(this);
     this.handlePaginationClick = this.handlePaginationClick.bind(this);
-  }
-
-  onSearchInputChanged(e) {
-    this.setState({searchTerm: e.target.value})
-  }
-
-  onSearch() {
-    fetchArticles({searchTerm: this.state.searchTerm}).then( (articles) => {
-      this.setState(articles);
-    })
+    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   async componentDidMount() {
-    const json = await fetchArticles()
-    this.setState({articles: json.articles, meta: json.meta})
+    const root = await fetchArticles()
+    this.setState({articles: root.articles, meta: root.meta})
+  }
+
+  onSearchInputChanged(event, {newValue}) {
+    this.setState({searchTerm: newValue})
+  }
+
+  async onSearch(e) {
+    // Enter pressed
+    if (e.charCode == 13) {
+      const root = await fetchArticles({searchTerm: this.state.searchTerm})
+      this.setState({articles: root.articles, meta: root.meta});
+    }
+  }
+
+  async handleSubmit(e) {
+    e.preventDefault();
+    const root = await fetchArticles({searchTerm: this.state.searchTerm})
+    this.setState({articles: root.articles, meta: root.meta});
+  }
+
+  async onSuggestionsFetchRequested({value}) {
+    const suggestions = await fetchSuggestions(value)
+    this.setState({ searchSuggestions: suggestions.articles });
+  }
+
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      searchSuggestions: []
+    });
   }
 
   async handlePaginationClick(data) {
-    this.setState({currentPage: data.selected+1})
     const articles = await fetchArticles({searchTerm: this.state.searchTerm,
                                           currentPage: data.selected+1})
     this.setState(articles)
@@ -45,13 +66,43 @@ class ArticlesContainer extends React.Component {
 
   }
 
+  getSuggestionValue = suggestion => suggestion.title;
+
+  renderSuggestion = suggestion => (
+    <div>
+      {suggestion.title}
+    </div>
+  );
+
   render() {
+    const inputProps = {
+      placeholder: 'Article title',
+      value: this.state.searchTerm,
+      onChange: this.onSearchInputChanged,
+      onKeyPress: this.onSearch
+    };
+
     return (
       <div className="contents">
         <div className="row">
           <div className="section" id="articles-section">
             <Articles articles={this.state.articles}/>
-            <SearchForm onSearch={this.onSearch} onSearchInputChanged={this.onSearchInputChanged}/>
+            <div className="col-1-4">
+              <form onSubmit={this.handleSubmit}>
+                <div className="search">
+                  Search Articles
+                    <Autosuggest
+                      suggestions={this.state.searchSuggestions}
+                      onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                      onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                      getSuggestionValue={this.getSuggestionValue}
+                      renderSuggestion={this.renderSuggestion}
+                      inputProps={inputProps}
+                    />
+                    <input type="submit" name="commit" value="search"/>
+                  </div>
+                </form>
+              </div>
           </div>
         </div>
         <div className="row">
