@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactPaginate from 'react-paginate'
-
-import {fetchArticles, fetchSuggestions} from '../../data/article'
+import {fetchArticles, /*fetchSuggestions,*/ fetchRelevantSuggestions} from '../../data/article'
 import Articles from './Articles'
 import Autosuggest from 'react-autosuggest';
 
@@ -48,7 +47,9 @@ class ArticlesContainer extends React.Component {
   }
 
   async onSuggestionsFetchRequested({value}) {
-    const suggestions = await fetchSuggestions(value)
+    // Story #2 suggestions
+    //const suggestions = await fetchSuggestions(value)
+    const suggestions = await fetchRelevantSuggestions(value)
     this.setState({ searchSuggestions: suggestions.articles });
   }
 

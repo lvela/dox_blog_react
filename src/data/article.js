@@ -18,6 +18,10 @@ export function fetchSuggestions(value) {
   return _fetchArticles(`articles/search_suggestions.json?value=${value}`)
 }
 
+export function fetchRelevantSuggestions(value) {
+  return _fetchArticles(`articles/search_with_relevance.json?value=${value}`)
+}
+
 async function _fetchArticles(path) {
   try {
     let response = await fetch(
